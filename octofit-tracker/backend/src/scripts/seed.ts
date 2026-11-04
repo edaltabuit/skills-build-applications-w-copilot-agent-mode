@@ -29,6 +29,11 @@ export async function seed() {
       { $set: { name: 'Robocats', mascot: 'Hubot' } },
       { upsert: true, new: true, setDefaultsOnInsert: true },
     );
+    await Team.findOneAndUpdate(
+      { name: 'Starcats' },
+      { $set: { name: 'Starcats', mascot: 'Star' } },
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    );
     const mona = await upsertDemoUser('Mona', 'mona@example.com', octocats._id, 'endurance');
     const hubot = await upsertDemoUser('Hubot', 'hubot@example.com', robocats._id, 'strength');
 
@@ -44,6 +49,12 @@ export async function seed() {
       { $set: { user: hubot._id, team: robocats._id, type: 'cycle', minutes: 25, points: 25, occurredAt: hubotCycleAt } },
       { upsert: true },
     );
+    const monaWalkAt = new Date('2026-01-12T12:00:00.000Z');
+    await Activity.updateOne(
+      { user: mona._id, team: octocats._id, type: 'walk', occurredAt: monaWalkAt },
+      { $set: { user: mona._id, team: octocats._id, type: 'walk', minutes: 20, points: 20, occurredAt: monaWalkAt } },
+      { upsert: true },
+    );
     await Workout.updateOne(
       { title: 'Intervals' },
       { $set: { title: 'Intervals', focus: 'endurance', minutes: 30, difficulty: 'moderate' } },
@@ -52,6 +63,11 @@ export async function seed() {
     await Workout.updateOne(
       { title: 'Strength Circuit' },
       { $set: { title: 'Strength Circuit', focus: 'strength', minutes: 30, difficulty: 'moderate' } },
+      { upsert: true },
+    );
+    await Workout.updateOne(
+      { title: 'Mobility Flow' },
+      { $set: { title: 'Mobility Flow', focus: 'mobility', minutes: 20, difficulty: 'easy' } },
       { upsert: true },
     );
   } finally {
